@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 export const createMembers = async () => {
+  // สร้างอาร์เรย์ (array) ข้อมูลของสมาชิก (members)
   const members = [
     {
       firstName: 'วีรยุทธ',
@@ -50,12 +51,14 @@ export const createMembers = async () => {
     },
   ]
 
+  // วนซ้ำผ่านรายชื่อสมาชิก (members)
   for (const member of members) {
+    // สร้างสมาชิกใหม่ (member) ในฐานข้อมูล
     await prisma.member.create({
       data: {
-        firstName: member.firstName,
-        lastName: member.lastName,
-        phone: member.phone,
+        firstName: member.firstName, // ชื่อ
+        lastName: member.lastName, // นามสกุล
+        phone: member.phone, // หมายเลขโทรศัพท์
       },
     })
   }

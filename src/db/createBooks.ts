@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 export async function createBooks() {
+  // สร้างอาร์เรย์ (array) ข้อมูลของต้นสังกัด (affiliations)
   const affiliations = [
     'สำนักพิมพ์แห่งจุฬาลงกรณ์มหาวิทยาลัย',
     'สำนักพิมพ์มหาวิทยาลัยธรรมศาสตร์',
@@ -15,28 +16,32 @@ export async function createBooks() {
     'สำนักพิมพ์มหาวิทยาลัยอัสสัมชัญ',
   ]
 
+  // สร้างเซต (Set) สำหรับเก็บสตริงที่สร้างขึ้น
+  // เพื่อให้แน่ใจว่าสตริงที่สร้างขึ้นไม่มีการซ้ำกัน
   let generatedStrings = new Set()
   function generateUniqueString() {
     let uniqueString = ''
     do {
-      // Generate a random uppercase letter (A-Z)
+      // สร้างตัวอักษรตัวพิมพ์ใหญ่แบบสุ่ม (A-Z)
       let letter = String.fromCharCode(65 + Math.floor(Math.random() * 26))
 
-      // Generate a 11-digit random number and pad it with leading zeros
+      // สร้างตัวเลขสุ่ม 11 หลักแล้วเติมด้วยศูนย์นำหน้า
       let number = Math.floor(Math.random() * 1000000000000)
         .toString()
         .padStart(11, '0')
 
-      // Combine the letter and the number
+      // รวมตัวอักษรและตัวเลข
       uniqueString = letter + number
-    } while (generatedStrings.has(uniqueString)) // Check for duplicates
+    } while (generatedStrings.has(uniqueString)) // ตรวจสอบรายการซ้ำ
 
-    // Add the new string to the set
+    // เพิ่มสตริงที่สร้างขึ้น (uniqueString) เข้าไปในเซต (generatedStrings)
+    // เพื่อให้แน่ใจว่าสตริงนั้นไม่ถูกสร้างซ้ำในอนาคต
     generatedStrings.add(uniqueString)
 
     return uniqueString
   }
 
+  // สร้างอาร์เรย์ (array) ข้อมูลของผู้เขียน (authors)
   const authors = [
     {
       firstName: 'จเด็ด',
@@ -100,6 +105,7 @@ export async function createBooks() {
     })
   }
 
+  // สร้างอาร์เรย์ (array) ข้อมูลของหนังสือ (books)
   const books = [
     {
       title: 'Java เบื้องต้น',
@@ -233,34 +239,47 @@ export async function createBooks() {
     })
   }
 
-  /* Start Book */
+  // เลือกผู้เขียน (author) แบบสุ่มจากอาร์เรย์ (authors)
   const authorRandom = authors[Math.floor(Math.random() * authors.length)]
+
+  // สร้างผู้เขียนใหม่ (author) โดยใช้ข้อมูลจากผู้เขียนที่เลือกแบบสุ่ม
+  // และสังกัด (affiliation) แบบสุ่มจากอาร์เรย์ (affiliations)
   const cmAffiliation = await prisma.author.create({
     data: {
-      firstName: authorRandom.firstName,
-      lastName: authorRandom.lastName,
+      firstName: authorRandom.firstName, // ชื่อ
+      lastName: authorRandom.lastName, // นามสกุล
       affiliation:
-        affiliations[Math.floor(Math.random() * affiliations.length)],
+        affiliations[Math.floor(Math.random() * affiliations.length)], // สังกัด
     },
   })
 
+  // ค้นหาสารบบหนังสือ (books) ทั้งหมด
   const responseBooks = await prisma.book.findMany()
+
+  // ค้นหาสารบบผู้เขียน (authors) ทั้งหมด
   const responseAuthors = await prisma.author.findMany()
+
+  // วนซ้ำผ่านรายการหนังสือ (books)
   for (const rpbook of responseBooks) {
+    // เลือกผู้เขียน (author) แบบสุ่มจากรายการผู้เขียน (authors)
     const randomAuthor =
       responseAuthors[Math.floor(Math.random() * responseAuthors.length)]
+
+    // เพิ่มผู้เขียน (author) เข้ากับหนังสือ (book) ที่กำลังวนซ้ำ
     await addAuthor(rpbook.id, randomAuthor.id)
   }
 
   console.log('Database has been initialized with books.')
 
-  async function addAuthor(bookId: number, autherId: number) {
+  // ฟังก์ชันสำหรับเพิ่มผู้เขียน (author) เข้ากับหนังสือ (book)
+  async function addAuthor(bookId: number, authorId: number) {
+    // อัปเดตหนังสือ (book) โดยเชื่อมโยงกับผู้เขียน (author) ที่เลือก
     await prisma.book.update({
-      where: { id: bookId },
+      where: { id: bookId }, // ค้นหาหนังสือ (book) ตาม ID
       data: {
         author: {
           connect: {
-            id: autherId,
+            id: authorId, // เชื่อมโยงกับผู้เขียน (author) ตาม ID
           },
         },
       },

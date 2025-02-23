@@ -16,7 +16,7 @@ datasource db {
 model book {
   id          Int  @id @default(autoincrement())
   title       String
-  isbn        String @unique
+  isbn        String
   category    String
   authorId    Int?
   author      author?  @relation(fields: [authorId], references: [id])

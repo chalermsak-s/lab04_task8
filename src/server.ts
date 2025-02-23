@@ -1,7 +1,9 @@
 import express, { Request, Response } from 'express'
 import dotenv from 'dotenv'
-dotenv.config()
+import bookRoute from './routes/bookRoute'
+import authorRoute from './routes/authorRoute'
 
+dotenv.config()
 const app = express()
 const PORT = process.env.PORT || 3838
 
@@ -9,9 +11,8 @@ const PORT = process.env.PORT || 3838
 app.use(express.json())
 
 // Routes
-app.get('/', (req: Request, res: Response) => {
-  res.json(555)
-})
+app.use('/books', bookRoute)
+app.use('/authors', authorRoute)
 
 // Start server
 app.listen(PORT, () => {
