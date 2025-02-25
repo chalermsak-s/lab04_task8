@@ -8,5 +8,5 @@ export interface Borrowing {
   book?: Book
   borrowedAt?: Date
   dueDate?: Date
-  returnedAt?: Date
+  returnedAt?: Date | null
 }
