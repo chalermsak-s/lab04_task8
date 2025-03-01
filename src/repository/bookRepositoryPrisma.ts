@@ -47,3 +47,38 @@ export async function addBook(book: Book): Promise<Book> {
     },
   })
 }
+
+export async function getAllEventsWithOrganizerPagination(
+  keyword: string,
+  pageSize: number,
+  pageNo: number
+) {
+  const where:any = {
+    OR: [
+      { title: { contains: keyword } },
+      { isbn: { contains: keyword } },
+      { category: { contains: keyword } },
+      { author: { firstName: { contains: keyword } } },
+    ],
+  };
+
+  const books = await prisma.book.findMany({
+    where,
+    skip: pageSize * (pageNo - 1),
+    take: pageSize,
+    select: {
+      id: true,
+      title: true,
+      category: true,
+      author: false,
+      borrowings: false,
+    },
+  });
+  const count = await prisma.book.count({ where });
+  return { count, books };
+}
+
+export function countBook() {
+  return prisma.book.count()
+}
+

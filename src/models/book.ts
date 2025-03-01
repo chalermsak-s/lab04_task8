@@ -10,3 +10,8 @@ export interface Book {
   author?: Author
   borrowings?: Borrowing[]
 }
+
+export interface  PageBook{
+  count: number
+  books: Book[]
+}

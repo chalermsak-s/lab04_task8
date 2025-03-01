@@ -21,6 +21,23 @@ export function addBook(newBook: Book): Promise<Book> {
   return repo.addBook(newBook);
 }
 
+export async function getAllEventsWithPagination(
+  keyword: string,
+  pageSize: number,
+  pageNo: number
+) {
+  const pageEvents = await repo.getAllEventsWithOrganizerPagination(
+    keyword,
+    pageSize,
+    pageNo
+  )
+  return pageEvents
+}
+
+export function count() {
+  return repo.countBook()
+}
+
 
 
 

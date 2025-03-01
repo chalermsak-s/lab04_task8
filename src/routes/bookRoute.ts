@@ -6,10 +6,20 @@ dotenv.config()
 const router = express.Router()
 
 router.get('/', async (req: Request, res: Response) => {
-  if (req.query.group) {
-    const group = req.query.group as string
-    const filteredBooks = serv.getBookByGroups([group])
-    res.json(filteredBooks)
+  if (req.query.pageSize && req.query.pageNo) {
+    const pageSize = parseInt(req.query.pageSize as string) || 3
+    const pageNo = parseInt(req.query.pageNo as string) || 1
+    const keyword = req.query.keyword as string
+    const result = await serv.getAllEventsWithPagination(
+      keyword,
+      pageSize,
+      pageNo
+    )
+    res.setHeader('x-total-count', result.count.toString())
+    res.json(result.books)
+  } else if (req.query.category) {
+    const category = req.query.category
+    res.json(await serv.getAllBooks())
   } else {
     res.json(await serv.getAllBooks())
   }
