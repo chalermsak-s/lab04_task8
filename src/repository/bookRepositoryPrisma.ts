@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { Book } from '../models/book'
+import { Book,PageBook } from '../models/book'
 
 const prisma = new PrismaClient()
 
@@ -70,12 +70,12 @@ export async function getAllEventsWithOrganizerPagination(
       id: true,
       title: true,
       category: true,
-      author: false,
+      author: true,
       borrowings: false,
     },
   });
   const count = await prisma.book.count({ where });
-  return { count, books };
+  return { count, books } as PageBook;
 }
 
 export function countBook() {

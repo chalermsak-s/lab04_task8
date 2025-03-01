@@ -11,7 +11,7 @@ export interface Book {
   borrowings?: Borrowing[]
 }
 
-export interface  PageBook{
+export interface PageBook{
   count: number
   books: Book[]
 }
