@@ -1,9 +1,9 @@
 {
   "name": "lab04_task8",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node dist/server.js",
+    "start": "node dist/index.js",
     "build": "tsc",
     "dev": "nodemon",
     "seed": "ts-node src/seed.ts"
